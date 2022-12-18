@@ -12,14 +12,15 @@ import {
   Tooltip,
   chakra,
 } from '@chakra-ui/react';
+import { FaHeart } from '@react-icons/all-files/fa/FaHeart';
+import { FaShareAlt } from '@react-icons/all-files/fa/FaShareAlt';
 import { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next';
 import Image from 'next/image';
 import { Product } from 'swell-js';
 import Font from '../../lib/fonts';
 import { formatCurrency } from '../../lib/helpers';
+import { getAvailability } from '../../lib/swell/helpers';
 import { getAllProducts, getProductBySlug } from '../../lib/swell/queries';
-import { FaShareAlt } from '@react-icons/all-files/fa/FaShareAlt';
-import { FaHeart } from '@react-icons/all-files/fa/FaHeart';
 import { IndicatorBox } from '../../src/components/core';
 
 interface ProductPageProps {
@@ -61,6 +62,9 @@ export const getStaticProps = async (context: ProductGetStaticPropsContext) => {
  */
 const ProductPage: NextPage<ProductPageProps> = (props) => {
   const { product } = props;
+
+  const isAvailable = product.stockStatus !== 'out_of_stock';
+  console.log(product.stock);
   return (
     <Container as={Stack} spacing={16} maxW='6xl' w='full'>
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={16}>
@@ -80,9 +84,15 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
               <chakra.span textStyle='sectionLabel'>Product Code</chakra.span>{' '}
               <chakra.span>{product.sku}</chakra.span>
             </Flex>
-            <Text as='h1' className={Font.Fira.className} fontSize='4xl'>
-              {product.name}
-            </Text>
+            <Stack>
+              <Text as='h1' className={Font.Fira.className} fontSize='4xl'>
+                {product.name}
+              </Text>
+              <Flex gap={2} alignItems='center' fontSize='sm'>
+                <chakra.span textStyle='sectionLabel'>Availability</chakra.span>{' '}
+                <chakra.span>{getAvailability(product)}</chakra.span>
+              </Flex>
+            </Stack>
             <Divider />
             <HStack justifyContent='space-between'>
               <Box>
@@ -114,7 +124,9 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
             </HStack>
             <Divider />
             <HStack>
-              <Button variant='primary'>Add to cart</Button>
+              <Button variant='primary' disabled={!isAvailable}>
+                {isAvailable ? 'Add to cart' : 'Out of stock'}
+              </Button>
               <Tooltip label='Add to wishlist' fontSize='sm'>
                 <Box>
                   <IndicatorBox>
