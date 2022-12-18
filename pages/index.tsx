@@ -8,7 +8,6 @@ export default function Home({
 }: {
   products: { results: Product[] };
 }) {
-  console.log(products.results[0]);
   return (
     <Container maxW='8xl' w='full'>
       <SimpleGrid columns={{ base: 1, lg: 3, xl: 4 }}>

@@ -6,15 +6,14 @@ import {
   Text,
   chakra,
 } from '@chakra-ui/react';
-import { Fira_Sans_Condensed } from '@next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from 'swell-js';
+import Font from '../../../../lib/fonts';
 
 /**
  * Import Google font.
  */
-const fira = Fira_Sans_Condensed({ weight: ['400'], subsets: ['latin'] });
 
 /**
  * Card display for the given product.
@@ -32,7 +31,7 @@ const ProductCard = (props: Product) => {
       </CardHeader>
       <CardBody textAlign='center'>
         <chakra.h3
-          className={fira.className}
+          className={Font.Fira.className}
           fontSize='lg'
           color='gray.500'
           _hover={{ color: 'black' }}

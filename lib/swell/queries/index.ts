@@ -1,1 +1,1 @@
-export { default as getAllProducts } from './getAllProducts';
+export * from './product';
