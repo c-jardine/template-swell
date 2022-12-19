@@ -16,11 +16,13 @@ import { FaHeart } from '@react-icons/all-files/fa/FaHeart';
 import { FaShareAlt } from '@react-icons/all-files/fa/FaShareAlt';
 import { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next';
 import Image from 'next/image';
+import React from 'react';
 import { Product } from 'swell-js';
 import Font from '../../lib/fonts';
 import { formatCurrency } from '../../lib/helpers';
 import { getAvailability } from '../../lib/swell/helpers';
 import { getAllProducts, getProductBySlug } from '../../lib/swell/queries';
+import { Quantity } from '../../src/components';
 import { IndicatorBox } from '../../src/components/core';
 
 interface ProductPageProps {
@@ -64,7 +66,7 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
   const { product } = props;
 
   const isAvailable = product.stockStatus !== 'out_of_stock';
-  console.log(product.stock);
+  const [quantity, setQuantity] = React.useState<number>(1);
   return (
     <Container as={Stack} spacing={16} maxW='6xl' w='full'>
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={16}>
@@ -123,18 +125,25 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
               </Tooltip>
             </HStack>
             <Divider />
-            <HStack>
-              <Button variant='primary' disabled={!isAvailable}>
-                {isAvailable ? 'Add to cart' : 'Out of stock'}
-              </Button>
-              <Tooltip label='Add to wishlist' fontSize='sm'>
-                <Box>
-                  <IndicatorBox>
-                    <Icon as={FaHeart} />
-                  </IndicatorBox>
-                </Box>
-              </Tooltip>
-            </HStack>
+            <Stack spacing={8}>
+              <Quantity
+                quantity={quantity}
+                onChange={setQuantity}
+                maxQuantity={product.content.maxQuantity}
+              />
+              <HStack>
+                <Button variant='primary' disabled={!isAvailable}>
+                  {isAvailable ? 'Add to cart' : 'Out of stock'}
+                </Button>
+                <Tooltip label='Add to wishlist' fontSize='sm'>
+                  <Box>
+                    <IndicatorBox>
+                      <Icon as={FaHeart} />
+                    </IndicatorBox>
+                  </Box>
+                </Tooltip>
+              </HStack>
+            </Stack>
           </Stack>
         </Box>
       </SimpleGrid>

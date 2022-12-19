@@ -1,2 +1,2 @@
-export * from './product/ProductCard';
+export * from './core';
 export * from './product';
