@@ -3,11 +3,11 @@ import React from 'react';
 import { ProductOptionValue } from 'swell-js';
 import { Checkbox } from '../Checkbox';
 
-interface OptionChecklistProps {
+interface OptionCheckboxGroupProps {
   items: ProductOptionValue[];
 }
 
-const OptionChecklist = (props: OptionChecklistProps) => {
+const OptionCheckboxGroup = (props: OptionCheckboxGroupProps) => {
   const [selected, setSelected] = React.useState<string>('');
 
   const _handleClick = (val: string) => {
@@ -29,4 +29,4 @@ const OptionChecklist = (props: OptionChecklistProps) => {
   );
 };
 
-export default OptionChecklist;
+export default OptionCheckboxGroup;

@@ -1,2 +1,2 @@
 export * from './Checkbox';
-export * from './OptionChecklist';
+export * from './OptionCheckboxGroup';

@@ -1,7 +1,7 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { getOptions } from '../../../../lib/swell/helpers';
 import { ProductProps } from '../../../../lib/swell/types';
-import { OptionChecklist } from '../../core';
+import { OptionCheckboxGroup } from '../../core';
 import { ColorSelect } from '../ColorSelect';
 
 interface ProductOptionsProps {
@@ -19,7 +19,7 @@ const ProductOptions = (props: ProductOptionsProps) => {
           {option.name === 'Color' ? (
             <ColorSelect items={option.variants} />
           ) : (
-            <OptionChecklist items={option.variants} />
+            <OptionCheckboxGroup items={option.variants} />
           )}
         </Stack>
       ))}
