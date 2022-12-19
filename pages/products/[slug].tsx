@@ -9,6 +9,8 @@ import {
   ProductDescription,
   ProductSidebar,
 } from '../../src/components';
+import { NextSeo } from 'next-seo';
+import { client } from '../../lib/swell';
 
 interface ProductPageProps {
   product: ProductProps & {
@@ -59,17 +61,31 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
     product,
   };
 
-  // console.log(product);
-
   return (
-    <Container as={Stack} spacing={16} maxW='6xl' w='full'>
-      <SimpleGrid columns={{ base: 1, lg: 2 }} gap={16}>
-        <ProductCarousel product={product} />
-        <ProductSidebar {...detailsProps} />
-      </SimpleGrid>
-      <Divider />
-      <ProductDescription product={product} />
-    </Container>
+    <>
+      <NextSeo
+        title={product.metaTitle}
+        description={product.metaDescription}
+        openGraph={{
+          title: product.metatitle,
+          description: product.metaDescription,
+          images: [
+            {
+              url: product.images[0].file.url,
+            },
+          ],
+        }}
+        twitter={{ cardType: 'summary_large_image' }}
+      />
+      <Container as={Stack} spacing={16} maxW='6xl' w='full'>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={16}>
+          <ProductCarousel product={product} />
+          <ProductSidebar {...detailsProps} />
+        </SimpleGrid>
+        <Divider />
+        <ProductDescription product={product} />
+      </Container>
+    </>
   );
 };
 

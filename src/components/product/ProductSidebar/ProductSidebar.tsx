@@ -12,10 +12,11 @@ import {
 } from '@chakra-ui/react';
 import { FaHeart } from '@react-icons/all-files/fa/FaHeart';
 import { FaShareAlt } from '@react-icons/all-files/fa/FaShareAlt';
+import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { ProductOption } from 'swell-js';
+import { Product, ProductOption, ProductVariant } from 'swell-js';
 import Font from '../../../../lib/fonts';
-import { formatCurrency } from '../../../../lib/helpers';
+import { formatCurrency, objectSubset } from '../../../../lib/helpers';
 import { getAvailability } from '../../../../lib/swell/helpers';
 import { ProductProps } from '../../../../lib/swell/types';
 import { ProductOptions } from '../ProductOptions';
@@ -37,7 +38,12 @@ interface ProductSidebarProps {
  */
 const ProductSidebar = (props: ProductSidebarProps) => {
   const { product, quantity, setQuantity } = props;
-  const isAvailable = product.stockStatus !== 'out_of_stock';
+
+  const [addToCartEnabled, setAddToCartEnabled] =
+    React.useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] =
+    React.useState<Product>(product);
+  const isAvailable = selectedProduct.stockStatus !== 'out_of_stock';
 
   /**
    * Generate initial values for the options (uses the first option value).
@@ -58,7 +64,26 @@ const ProductSidebar = (props: ProductSidebarProps) => {
   const onSubmit = (data: { quantity: number; [x: string]: string | number }) =>
     console.log(data);
 
-  console.log(product.variants);
+  React.useEffect(() => {
+    methods.watch(() => {
+      const obj = objectSubset(methods.watch(), ['quantity']);
+      const vals = Object.values(obj);
+      const variantName = vals.toString().replace(',', ', ');
+      const variant: ProductVariant = props.product.variants?.results.filter(
+        (variant: ProductVariant) => variant.name === variantName
+      )[0];
+      setSelectedProduct(variant);
+      if (variant.stockStatus === 'in_stock') {
+        setAddToCartEnabled(true);
+      } else {
+        setAddToCartEnabled(false);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [methods.watch]);
+
+  // const g = Object.values(f);
+  // console.log(g.toString().replace(',', ', '));
 
   return (
     <Box>
@@ -126,7 +151,10 @@ const ProductSidebar = (props: ProductSidebarProps) => {
               />
               <HStack>
                 {/* Add to cart */}
-                <Button variant='primary' disabled={!isAvailable}>
+                <Button
+                  variant='primary'
+                  disabled={!isAvailable || !addToCartEnabled}
+                >
                   {isAvailable ? 'Add to cart' : 'Out of stock'}
                 </Button>
                 {/* Add to wishlist */}
