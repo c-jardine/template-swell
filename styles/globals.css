@@ -4,6 +4,7 @@ li {
 
 .indicator {
   position: relative;
+  border-radius: 0 !important;
   box-shadow: 0 0 0 1px var(--chakra-colors-gray-300) inset;
   transition: 200ms ease-in-out;
 }

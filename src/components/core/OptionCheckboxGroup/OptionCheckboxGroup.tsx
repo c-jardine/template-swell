@@ -1,31 +1,44 @@
 import { Flex } from '@chakra-ui/react';
 import React from 'react';
-import { ProductOptionValue } from 'swell-js';
+import { useFormContext } from 'react-hook-form';
+import { ProductOption } from 'swell-js';
 import { Checkbox } from '../Checkbox';
 
 interface OptionCheckboxGroupProps {
-  items: ProductOptionValue[];
+  option: ProductOption & { attributeId: string };
 }
 
 const OptionCheckboxGroup = (props: OptionCheckboxGroupProps) => {
   const [selected, setSelected] = React.useState<string>('');
 
+  const { register, setValue, watch } = useFormContext();
+
   const _handleClick = (val: string) => {
-    console.log(val);
     setSelected(val);
+    setValue(props.option.attributeId, val);
   };
+
+  /**
+   * Set initial value/default value.
+   */
+  React.useEffect(() => {
+    setSelected(watch(props.option.attributeId));
+  }, [props.option.attributeId, watch]);
   return (
-    <Flex gap={2}>
-      {props.items.map((item) => (
-        <Checkbox
-          key={item.name}
-          isToggled={selected === item.name}
-          onToggle={() => _handleClick(item.name)}
-        >
-          {item.name}
-        </Checkbox>
-      ))}
-    </Flex>
+    <>
+      <input hidden {...register(props.option.attributeId)} />
+      <Flex gap={2}>
+        {props.option.values.map((item) => (
+          <Checkbox
+            key={item.name}
+            isToggled={selected === item.name}
+            onToggle={() => _handleClick(item.name)}
+          >
+            {item.name}
+          </Checkbox>
+        ))}
+      </Flex>
+    </>
   );
 };
 

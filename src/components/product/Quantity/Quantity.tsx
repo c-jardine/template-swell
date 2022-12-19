@@ -1,7 +1,8 @@
-import { Box, Flex, Icon, Input, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Input, Stack, Text } from '@chakra-ui/react';
 import { FaMinus } from '@react-icons/all-files/fa/FaMinus';
 import { FaPlus } from '@react-icons/all-files/fa/FaPlus';
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface QuantityProps {
   maxQuantity: number;
@@ -19,12 +20,15 @@ const Quantity = (props: QuantityProps) => {
   const [decreaseDisabled, setDecreaseDisabled] =
     React.useState<boolean>(false);
 
+  const { register, setValue, watch } = useFormContext();
+
   /**
    * Handle quantity change when pressing the decrease button.
    */
   const _decreaseQuantity = () => {
-    if (props.quantity > 1) {
-      props.onChange(props.quantity - 1);
+    const quantity = parseInt(watch('quantity'));
+    if (quantity > 1) {
+      setValue('quantity', quantity - 1);
     }
   };
 
@@ -32,8 +36,9 @@ const Quantity = (props: QuantityProps) => {
    * Handle quantity change when pressing the increase button.
    */
   const _increaseQuantity = () => {
-    if (props.quantity < props.maxQuantity) {
-      props.onChange(props.quantity + 1);
+    const quantity = parseInt(watch('quantity'));
+    if (quantity < props.maxQuantity) {
+      setValue('quantity', quantity + 1);
     }
   };
 
@@ -43,12 +48,12 @@ const Quantity = (props: QuantityProps) => {
   const _handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Make sure to convert it to an int!
     const value = parseInt(e.target.value);
-    if (value < 0) {
-      props.onChange(1);
+    if (value < 1) {
+      setValue('quantity', 1);
     } else if (value > props.maxQuantity) {
-      props.onChange(props.maxQuantity);
+      setValue('quantity', props.maxQuantity);
     } else {
-      props.onChange(parseInt(e.target.value));
+      setValue('quantity', e.target.value);
     }
   };
 
@@ -56,23 +61,24 @@ const Quantity = (props: QuantityProps) => {
    * Handle disabled state of quantity change buttons.
    */
   React.useEffect(() => {
-    props.quantity === 1
-      ? setDecreaseDisabled(true)
-      : setDecreaseDisabled(false);
-    props.quantity === props.maxQuantity
+    const quantity = parseInt(watch('quantity'));
+    quantity <= 1 ? setDecreaseDisabled(true) : setDecreaseDisabled(false);
+    quantity >= props.maxQuantity
       ? setIncreaseDisabled(true)
       : setIncreaseDisabled(false);
-  }, [props.maxQuantity, props.quantity]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.maxQuantity, watch('quantity')]);
 
   return (
     <Stack>
       <Text textStyle='sectionLabel'>Quantity</Text>
       <Flex gap={2}>
         <Box onClick={_decreaseQuantity}>
-          <Flex
+          <Button
+            variant='none'
             className='indicator'
             boxSize={10}
-            cursor='pointer'
+            cursor={decreaseDisabled ? 'not-allowed' : 'pointer'}
             justifyContent='center'
             alignItems='center'
           >
@@ -80,23 +86,22 @@ const Quantity = (props: QuantityProps) => {
               as={FaMinus}
               w={2}
               h={2}
-              color={props.quantity === 1 ? 'gray.300' : 'black'}
+              color={decreaseDisabled ? 'gray.300' : 'black'}
             />
-          </Flex>
+          </Button>
         </Box>
         <Input
+          {...register('quantity', { onChange: _handleChangeQuantity })}
           w={12}
           fontSize='sm'
           textAlign='center'
           type='number'
-          value={props.quantity}
-          onChange={_handleChangeQuantity}
         />
-        <Box onClick={_increaseQuantity}>
+        <Button variant='unstyled' onClick={_increaseQuantity}>
           <Flex
             className='indicator'
             boxSize={10}
-            cursor='pointer'
+            cursor={increaseDisabled ? 'not-allowed' : 'pointer'}
             justifyContent='center'
             alignItems='center'
           >
@@ -107,7 +112,7 @@ const Quantity = (props: QuantityProps) => {
               color={increaseDisabled ? 'gray.300' : 'black'}
             />
           </Flex>
-        </Box>
+        </Button>
       </Flex>
     </Stack>
   );

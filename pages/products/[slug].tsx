@@ -1,6 +1,7 @@
 import { Container, Divider, SimpleGrid, Stack } from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next';
 import React from 'react';
+import { ProductOption } from 'swell-js';
 import { getAllProducts, getProductBySlug } from '../../lib/swell/queries';
 import { ProductProps } from '../../lib/swell/types';
 import {
@@ -10,7 +11,9 @@ import {
 } from '../../src/components';
 
 interface ProductPageProps {
-  product: ProductProps;
+  product: ProductProps & {
+    options: (ProductOption & { attributeId: string })[];
+  };
 }
 
 interface ProductGetStaticPropsContext extends GetStaticPropsContext {
@@ -55,6 +58,8 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
     setQuantity,
     product,
   };
+
+  // console.log(product);
 
   return (
     <Container as={Stack} spacing={16} maxW='6xl' w='full'>

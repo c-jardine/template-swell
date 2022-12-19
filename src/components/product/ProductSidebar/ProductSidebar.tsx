@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { FaHeart } from '@react-icons/all-files/fa/FaHeart';
 import { FaShareAlt } from '@react-icons/all-files/fa/FaShareAlt';
+import { FormProvider, useForm } from 'react-hook-form';
+import { ProductOption } from 'swell-js';
 import Font from '../../../../lib/fonts';
 import { formatCurrency } from '../../../../lib/helpers';
 import { getAvailability } from '../../../../lib/swell/helpers';
@@ -20,23 +22,53 @@ import { ProductOptions } from '../ProductOptions';
 import { Quantity } from '../Quantity';
 
 /**
- * Renders the products details and purchasing options.
+ * Declare props for the component.
  */
-const ProductSidebar = (props: {
-  product: ProductProps;
+interface ProductSidebarProps {
+  product: ProductProps & {
+    options: (ProductOption & { attributeId: string })[];
+  };
   quantity: number;
   setQuantity: any;
-}) => {
+}
+
+/**
+ * Renders the products details and purchasing options.
+ */
+const ProductSidebar = (props: ProductSidebarProps) => {
   const { product, quantity, setQuantity } = props;
   const isAvailable = product.stockStatus !== 'out_of_stock';
+
+  /**
+   * Generate initial values for the options (uses the first option value).
+   */
+  const initialValues: { [x: string]: string | number } = { quantity: 1 };
+  props.product.options?.forEach((option) => {
+    initialValues[option.attributeId] = option.values[0].name;
+  });
+
+  /**
+   * Configure react-hook-form.
+   */
+  const methods = useForm({ defaultValues: initialValues });
+
+  /**
+   * Handle form submission.
+   */
+  const onSubmit = (data: { quantity: number; [x: string]: string | number }) =>
+    console.log(data);
+
+  console.log(product.variants);
 
   return (
     <Box>
       <Stack spacing={4}>
+        {/* Product code/sku */}
         <Flex gap={2} alignItems='center' fontSize='sm'>
           <chakra.span textStyle='sectionLabel'>Product Code</chakra.span>{' '}
           <chakra.span>{product.sku}</chakra.span>
         </Flex>
+        {/* Product name and availability */}
         <Stack>
           <Text as='h1' className={Font.Fira.className} fontSize='4xl'>
             {product.name}
@@ -48,6 +80,7 @@ const ProductSidebar = (props: {
         </Stack>
         <Divider />
         <HStack justifyContent='space-between'>
+          {/* Product price */}
           <Box>
             <Text textStyle='sectionLabel'>Price</Text>
             <Flex gap={2} textAlign='center'>
@@ -65,6 +98,7 @@ const ProductSidebar = (props: {
               )}
             </Flex>
           </Box>
+          {/* Share button */}
           <Tooltip label='Share with friends' fontSize='sm'>
             <Flex
               className='indicator'
@@ -78,34 +112,41 @@ const ProductSidebar = (props: {
           </Tooltip>
         </HStack>
         <Divider />
-        <Stack spacing={8}>
-          <Flex gap={4} flexWrap='wrap'>
-            <Quantity
-              quantity={quantity}
-              onChange={setQuantity}
-              maxQuantity={product.content.maxQuantity}
-            />
-            <ProductOptions product={product} />
-          </Flex>
-          <HStack>
-            <Button variant='primary' disabled={!isAvailable}>
-              {isAvailable ? 'Add to cart' : 'Out of stock'}
-            </Button>
-            <Tooltip label='Add to wishlist' fontSize='sm'>
-              <Box>
-                <Flex
-                  className='indicator'
-                  boxSize={10}
-                  cursor='pointer'
-                  justifyContent='center'
-                  alignItems='center'
-                >
-                  <Icon as={FaHeart} />
-                </Flex>
-              </Box>
-            </Tooltip>
-          </HStack>
-        </Stack>
+        {/* User options */}
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Stack spacing={8}>
+              {/* Product options */}
+              <ProductOptions product={product} />
+              {/* Product quantity */}
+              <Quantity
+                quantity={quantity}
+                onChange={setQuantity}
+                maxQuantity={product.content.maxQuantity}
+              />
+              <HStack>
+                {/* Add to cart */}
+                <Button variant='primary' disabled={!isAvailable}>
+                  {isAvailable ? 'Add to cart' : 'Out of stock'}
+                </Button>
+                {/* Add to wishlist */}
+                <Tooltip label='Add to wishlist' fontSize='sm'>
+                  <Box>
+                    <Flex
+                      className='indicator'
+                      boxSize={10}
+                      cursor='pointer'
+                      justifyContent='center'
+                      alignItems='center'
+                    >
+                      <Icon as={FaHeart} />
+                    </Flex>
+                  </Box>
+                </Tooltip>
+              </HStack>
+            </Stack>
+          </form>
+        </FormProvider>
       </Stack>
     </Box>
   );
