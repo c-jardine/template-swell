@@ -10,6 +10,10 @@ export interface QuantityProps {
   onChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
+/**
+ * Renders an input box and buttons to adjust the quantity of product to be
+ * added to the cart.
+ */
 const Quantity = (props: QuantityProps) => {
   const [increaseDisabled, setIncreaseDisabled] =
     React.useState<boolean>(false);
