@@ -24,7 +24,7 @@ const Quantity = (props: QuantityProps) => {
    * Handle quantity change when pressing the decrease button.
    */
   const _decreaseQuantity = () => {
-    if (props.quantity !== 1) {
+    if (props.quantity > 1) {
       props.onChange(props.quantity - 1);
     }
   };
@@ -33,7 +33,7 @@ const Quantity = (props: QuantityProps) => {
    * Handle quantity change when pressing the increase button.
    */
   const _increaseQuantity = () => {
-    if (props.quantity !== props.maxQuantity) {
+    if (props.quantity < props.maxQuantity) {
       props.onChange(props.quantity + 1);
     }
   };
@@ -42,8 +42,15 @@ const Quantity = (props: QuantityProps) => {
    * Handle quantity change when typing in the input box.
    */
   const _handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Make sure to convert in to an int!
-    props.onChange(parseInt(e.target.value));
+    // Make sure to convert it to an int!
+    const value = parseInt(e.target.value);
+    if (value < 0) {
+      props.onChange(1);
+    } else if (value > props.maxQuantity) {
+      props.onChange(props.maxQuantity);
+    } else {
+      props.onChange(parseInt(e.target.value));
+    }
   };
 
   /**
