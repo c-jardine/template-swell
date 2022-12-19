@@ -18,6 +18,7 @@ import { getAvailability } from '../../../../lib/swell/helpers';
 import { ProductProps } from '../../../../lib/swell/types';
 import { IndicatorBox } from '../../core';
 import { Quantity } from '../Quantity';
+import { ProductOptions } from '../ProductOptions';
 
 /**
  * Renders the products details and purchasing options.
@@ -75,11 +76,14 @@ const ProductSidebar = (props: {
         </HStack>
         <Divider />
         <Stack spacing={8}>
-          <Quantity
-            quantity={quantity}
-            onChange={setQuantity}
-            maxQuantity={product.content.maxQuantity}
-          />
+          <Flex gap={4} flexWrap='wrap'>
+            <Quantity
+              quantity={quantity}
+              onChange={setQuantity}
+              maxQuantity={product.content.maxQuantity}
+            />
+            <ProductOptions product={product} />
+          </Flex>
           <HStack>
             <Button variant='primary' disabled={!isAvailable}>
               {isAvailable ? 'Add to cart' : 'Out of stock'}
