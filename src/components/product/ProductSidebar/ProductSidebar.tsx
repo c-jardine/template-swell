@@ -16,9 +16,8 @@ import Font from '../../../../lib/fonts';
 import { formatCurrency } from '../../../../lib/helpers';
 import { getAvailability } from '../../../../lib/swell/helpers';
 import { ProductProps } from '../../../../lib/swell/types';
-import { IndicatorBox } from '../../core';
-import { Quantity } from '../Quantity';
 import { ProductOptions } from '../ProductOptions';
+import { Quantity } from '../Quantity';
 
 /**
  * Renders the products details and purchasing options.
@@ -67,11 +66,15 @@ const ProductSidebar = (props: {
             </Flex>
           </Box>
           <Tooltip label='Share with friends' fontSize='sm'>
-            <Box>
-              <IndicatorBox>
-                <Icon as={FaShareAlt} />
-              </IndicatorBox>
-            </Box>
+            <Flex
+              className='indicator'
+              boxSize={10}
+              cursor='pointer'
+              justifyContent='center'
+              alignItems='center'
+            >
+              <Icon as={FaShareAlt} />
+            </Flex>
           </Tooltip>
         </HStack>
         <Divider />
@@ -90,9 +93,15 @@ const ProductSidebar = (props: {
             </Button>
             <Tooltip label='Add to wishlist' fontSize='sm'>
               <Box>
-                <IndicatorBox>
+                <Flex
+                  className='indicator'
+                  boxSize={10}
+                  cursor='pointer'
+                  justifyContent='center'
+                  alignItems='center'
+                >
                   <Icon as={FaHeart} />
-                </IndicatorBox>
+                </Flex>
               </Box>
             </Tooltip>
           </HStack>

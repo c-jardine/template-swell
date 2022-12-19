@@ -2,7 +2,6 @@ import { Box, Flex, Icon, Input, Stack, Text } from '@chakra-ui/react';
 import { FaMinus } from '@react-icons/all-files/fa/FaMinus';
 import { FaPlus } from '@react-icons/all-files/fa/FaPlus';
 import React from 'react';
-import { IndicatorBox } from '../../core';
 
 export interface QuantityProps {
   maxQuantity: number;
@@ -70,17 +69,22 @@ const Quantity = (props: QuantityProps) => {
       <Text textStyle='sectionLabel'>Quantity</Text>
       <Flex gap={2}>
         <Box onClick={_decreaseQuantity}>
-          <IndicatorBox disabled={decreaseDisabled}>
+          <Flex
+            className='indicator'
+            boxSize={10}
+            cursor='pointer'
+            justifyContent='center'
+            alignItems='center'
+          >
             <Icon
               as={FaMinus}
               w={2}
               h={2}
               color={props.quantity === 1 ? 'gray.300' : 'black'}
             />
-          </IndicatorBox>
+          </Flex>
         </Box>
         <Input
-          variant='outline'
           w={12}
           fontSize='sm'
           textAlign='center'
@@ -89,14 +93,20 @@ const Quantity = (props: QuantityProps) => {
           onChange={_handleChangeQuantity}
         />
         <Box onClick={_increaseQuantity}>
-          <IndicatorBox disabled={increaseDisabled}>
+          <Flex
+            className='indicator'
+            boxSize={10}
+            cursor='pointer'
+            justifyContent='center'
+            alignItems='center'
+          >
             <Icon
               as={FaPlus}
               w={2}
               h={2}
               color={increaseDisabled ? 'gray.300' : 'black'}
             />
-          </IndicatorBox>
+          </Flex>
         </Box>
       </Flex>
     </Stack>

@@ -1,24 +1,31 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import React from 'react';
 
-/**
- * Annoying wrapper component to create a simple container with border hover
- * effects made with box-shadow...since Safari can't do anything right. -_-
- */
-const IndicatorBox = (props: {
+interface CheckboxProps {
   children: React.ReactNode;
   disabled?: boolean;
-}) => {
+  isToggled: boolean;
+  onToggle: (isToggled: boolean) => void;
+}
+
+const Checkbox = (props: CheckboxProps) => {
   return (
     <Box
       position='relative'
       display='flex'
       placeItems='center'
-      cursor={props.disabled ? 'not-allowed' : 'pointer'}
-      boxShadow='0 0 0 1px var(--chakra-colors-gray-300) inset'
-      transition='box-shadow 200ms ease-in-out'
       h={10}
-      px={3}
+      px={4}
+      fontWeight='normal'
+      fontSize='sm'
+      rounded='false'
+      cursor={props.disabled ? 'not-allowed' : 'pointer'}
+      boxShadow={
+        props.isToggled
+          ? '0 0 0 1px var(--chakra-colors-black) inset'
+          : '0 0 0 1px var(--chakra-colors-gray-300) inset'
+      }
+      onClick={props.onToggle}
       // Create 'thicker' border with pseudo element that animates on opacity.
       _after={
         !props.disabled
@@ -29,7 +36,7 @@ const IndicatorBox = (props: {
               left: '1px',
               width: 'calc(100% - 2px)',
               height: 'calc(100% - 2px)',
-              opacity: 0,
+              opacity: props.isToggled ? 1 : 0,
               boxShadow: '0 0 0 1px black inset',
               transition: 'opacity 200ms ease-in-out',
             }
@@ -47,10 +54,11 @@ const IndicatorBox = (props: {
             }
           : {}
       }
+      transition='box-shadow 200ms ease-in-out'
     >
       {props.children}
     </Box>
   );
 };
 
-export default IndicatorBox;
+export default Checkbox;

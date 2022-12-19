@@ -1,3 +1,31 @@
 li {
   margin-left: 2rem;
 }
+
+.indicator {
+  position: relative;
+  box-shadow: 0 0 0 1px var(--chakra-colors-gray-300) inset;
+  transition: 200ms ease-in-out;
+}
+
+.indicator::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  opacity: 0;
+  box-shadow: 0 0 0 1px black inset;
+  transition: opacity 200ms ease-in-out;
+}
+
+.indicator:hover {
+  box-shadow: 0 0 0 1px black inset;
+  transition: box-shadow 200ms ease-in-out;
+}
+
+.indicator:hover::after {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
