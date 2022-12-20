@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from 'swell-js';
 import Font from '../../../../lib/fonts';
+import { getImage } from '../../../../lib/swell/helpers';
 
 /**
  * Import Google font.
@@ -23,7 +24,7 @@ const ProductCard = (props: Product) => {
     <Card key={props.id}>
       <CardHeader position='relative' h={72} w='full'>
         <Image
-          src={props.images[0].file.url}
+          src={getImage(props, 0)}
           alt=''
           fill
           style={{ objectFit: 'cover' }}

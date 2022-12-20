@@ -37,19 +37,32 @@ interface ProductSidebarProps {
  * Renders the products details and purchasing options.
  */
 const ProductSidebar = (props: ProductSidebarProps) => {
-  const { product, quantity, setQuantity } = props;
+  const {
+    product,
+    product: { options },
+    quantity,
+    setQuantity,
+  } = props;
 
-  const [addToCartEnabled, setAddToCartEnabled] =
-    React.useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] =
-    React.useState<Product>(product);
-  const isAvailable = selectedProduct.stockStatus !== 'out_of_stock';
+  /**
+   * Manage "add to cart" button state to show when a product or variant is out
+   * of stock.
+   */
+  const [addToCartEnabled, setAddToCartEnabled] = React.useState<boolean>(true);
+
+  /**
+   * Keep the selected product or variant in state to make it easier to add it
+   * to the cart.
+   */
+  const [selectedProduct, setSelectedProduct] = React.useState<
+    ProductVariant | Product
+  >(product.variants?.results[0] || product);
 
   /**
    * Generate initial values for the options (uses the first option value).
    */
   const initialValues: { [x: string]: string | number } = { quantity: 1 };
-  props.product.options?.forEach((option) => {
+  options?.forEach((option) => {
     initialValues[option.attributeId] = option.values[0].name;
   });
 
@@ -64,23 +77,34 @@ const ProductSidebar = (props: ProductSidebarProps) => {
   const onSubmit = (data: { quantity: number; [x: string]: string | number }) =>
     console.log(data);
 
+  /**
+   * Update the "add to cart" to the selected variant's availability status, if
+   * applicable.
+   */
+  const _checkAvailability = React.useCallback(() => {
+    // Get all options except quantity and build a string in the form of
+    // "OptionA, OptionB" to look up the variant in Swell.
+    // TODO: Super ugly, not great. Try something else.
+    const obj = objectSubset(methods.watch(), ['quantity']);
+    const objValues = Object.values(obj);
+    const variantName = objValues.toString().replace(',', ', ');
+    const variant: ProductVariant = props.product.variants?.results.filter(
+      (variant: ProductVariant) => variant.name === variantName
+    )[0];
+    setSelectedProduct(variant);
+    if (variant.stockStatus === 'in_stock') {
+      setAddToCartEnabled(true);
+    } else {
+      setAddToCartEnabled(false);
+    }
+  }, [methods, props.product.variants?.results]);
+
   React.useEffect(() => {
-    methods.watch(() => {
-      const obj = objectSubset(methods.watch(), ['quantity']);
-      const vals = Object.values(obj);
-      const variantName = vals.toString().replace(',', ', ');
-      const variant: ProductVariant = props.product.variants?.results.filter(
-        (variant: ProductVariant) => variant.name === variantName
-      )[0];
-      setSelectedProduct(variant);
-      if (variant.stockStatus === 'in_stock') {
-        setAddToCartEnabled(true);
-      } else {
-        setAddToCartEnabled(false);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [methods.watch]);
+    if (options.length > 0) {
+      // Get options from react-hook-form.
+      methods.watch(() => _checkAvailability());
+    }
+  }, [_checkAvailability, methods, options.length]);
 
   // const g = Object.values(f);
   // console.log(g.toString().replace(',', ', '));
@@ -151,11 +175,8 @@ const ProductSidebar = (props: ProductSidebarProps) => {
               />
               <HStack>
                 {/* Add to cart */}
-                <Button
-                  variant='primary'
-                  disabled={!isAvailable || !addToCartEnabled}
-                >
-                  {isAvailable ? 'Add to cart' : 'Out of stock'}
+                <Button variant='primary' disabled={!addToCartEnabled}>
+                  {addToCartEnabled ? 'Add to cart' : 'Out of stock'}
                 </Button>
                 {/* Add to wishlist */}
                 <Tooltip label='Add to wishlist' fontSize='sm'>

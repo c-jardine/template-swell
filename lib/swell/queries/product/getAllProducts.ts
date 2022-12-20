@@ -1,12 +1,17 @@
 import client from '../../client';
 
-/**
- * Get all products.
- * TODO: Enable pagination.
- */
-async function getAllProducts() {
+export async function getAllProductsSlugs() {
   const products = await client.products.list({});
   return products;
 }
 
-export default getAllProducts;
+/**
+ * Get all products.
+ */
+export async function getAllProducts(page?: number) {
+  const products = await client.products.list({
+    limit: 1,
+    page: page || 1,
+  });
+  return products;
+}

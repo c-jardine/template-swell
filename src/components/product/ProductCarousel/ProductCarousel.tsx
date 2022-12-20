@@ -1,6 +1,7 @@
 import { Box, SimpleGrid } from '@chakra-ui/react';
 import Image from 'next/image';
 import { ProductProps } from '../../../../lib/swell/types';
+import { getImage } from '../../../../lib/swell/helpers';
 
 interface ProductCarouselProps {
   product: ProductProps;
@@ -15,7 +16,7 @@ const ProductCarousel = (props: ProductCarouselProps) => {
   return (
     <Box position='relative' w='full' minH={400}>
       <Image
-        src={product.images[0].file.url}
+        src={getImage(product, 0)}
         alt=''
         fill
         style={{ objectFit: 'cover' }}

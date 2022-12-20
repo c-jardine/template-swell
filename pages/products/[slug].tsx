@@ -1,20 +1,24 @@
 import { Container, Divider, SimpleGrid, Stack } from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next';
+import { NextSeo } from 'next-seo';
 import React from 'react';
 import { ProductOption } from 'swell-js';
-import { getAllProducts, getProductBySlug } from '../../lib/swell/queries';
+import { getImage } from '../../lib/swell/helpers';
+import { getAllProductsSlugs, getProductBySlug } from '../../lib/swell/queries';
 import { ProductProps } from '../../lib/swell/types';
 import {
   ProductCarousel,
   ProductDescription,
   ProductSidebar,
 } from '../../src/components';
-import { NextSeo } from 'next-seo';
-import { client } from '../../lib/swell';
 
 interface ProductPageProps {
   product: ProductProps & {
-    options: (ProductOption & { attributeId: string })[];
+    metaTitle: string;
+    metaDescription: string;
+    options: (ProductOption & {
+      attributeId: string;
+    })[];
   };
 }
 
@@ -28,7 +32,7 @@ interface ProductGetStaticPropsContext extends GetStaticPropsContext {
  * Build the static paths to products.
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { results } = await getAllProducts();
+  const { results } = await getAllProductsSlugs();
   const slugs = results.map((result) => {
     return { params: { slug: result.slug } };
   });
@@ -61,17 +65,23 @@ const ProductPage: NextPage<ProductPageProps> = (props) => {
     product,
   };
 
+  const metadata = {
+    title: product.metaTitle || 'This product is missing a title.',
+    description:
+      product.metaDescription || 'This product is missing a description.',
+  };
+
   return (
     <>
       <NextSeo
-        title={product.metaTitle}
-        description={product.metaDescription}
+        title={metadata.title}
+        description={metadata.description}
         openGraph={{
-          title: product.metatitle,
-          description: product.metaDescription,
+          title: metadata.title,
+          description: metadata.description,
           images: [
             {
-              url: product.images[0].file.url,
+              url: getImage(product, 0),
             },
           ],
         }}
