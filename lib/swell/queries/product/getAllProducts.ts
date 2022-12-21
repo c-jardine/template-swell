@@ -10,7 +10,7 @@ export async function getAllProductsSlugs() {
  */
 export async function getAllProducts(page?: number) {
   const products = await client.products.list({
-    limit: 1,
+    limit: 16,
     page: page || 1,
   });
   return products;

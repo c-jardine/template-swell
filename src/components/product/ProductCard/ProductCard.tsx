@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardBody,
   CardHeader,
@@ -21,14 +22,22 @@ import { getImage } from '../../../../lib/swell/helpers';
  */
 const ProductCard = (props: Product) => {
   return (
-    <Card key={props.id}>
-      <CardHeader position='relative' h={72} w='full'>
-        <Image
-          src={getImage(props, 0)}
-          alt=''
-          fill
-          style={{ objectFit: 'cover' }}
-        />
+    <Card
+      key={props.id}
+      shadow='none'
+      borderWidth={1}
+      borderColor='gray.200'
+      rounded='none'
+    >
+      <CardHeader as={Link} href={`/products/${props.slug}`} p={0} h={72} w='full' overflow='hidden'>
+        <Box position='relative' w='full' h='full' transition='200ms ease-in-out' _hover={{transform: 'scale(110%)'}}>
+          <Image
+            src={getImage(props, 0)}
+            alt=''
+            fill
+            style={{ objectFit: 'cover' }}
+          />
+        </Box>
       </CardHeader>
       <CardBody textAlign='center'>
         <chakra.h3
